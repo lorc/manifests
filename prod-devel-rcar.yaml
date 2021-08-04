@@ -9,6 +9,7 @@ variables:
   XT_DOMU_DTB_NAME: "salvator-generic-domu.dtb"
   XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
   XT_PVR_NUM_OSID: "2"
+  XT_OP_TEE_FLAVOUR: "generic_dt"
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
@@ -190,6 +191,7 @@ components:
         - *COMMON_CONF
         - *DOMD_DOMU_CONF
         - [XT_DOM_NAME, "domd"]
+        - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
 
       build_target: core-image-weston
       layers:
@@ -259,6 +261,7 @@ parameters:
           XT_DOMD_CONFIG_NAME: "domd-salvator-xs-m3-2x4g.cfg"
           XT_DOMU_CONFIG_NAME: "domu-generic-m3-2x4g.cfg"
           XT_DOMD_DTB_NAME: "r8a77961-salvator-xs-2x4g-domd.dtb"
+          XT_OP_TEE_FLAVOUR: "salvator_m3_2x4g"
     salvator-xs-h3:
       overrides:
         variables:
