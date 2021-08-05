@@ -13,6 +13,8 @@ project. Work is still in progress, but right now the following features are tes
 * Networking in DomD and DomU
 * Network (NFS) boot for DomD and DomU
 * OP-TEE client in DomU
+* Virtualized OP-TEE build
+* ARM-TF that boots into EL2
 
 Features that are present but not tested:
 
@@ -23,8 +25,6 @@ Features that are present but not tested:
 
 Features that are planned, but not present:
 
-* Virtualized OP-TEE build
-* ARM-TF that boots into EL2
 * AGL support
 * Multimedia (HW-assisted video decoding/encoding) support
 
