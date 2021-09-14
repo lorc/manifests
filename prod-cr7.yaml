@@ -176,8 +176,8 @@ components:
         url: "git://github.com/CogentEmbedded/meta-rcar.git"
         rev: "a99eb54e9b068375b306fec53f1530f7eb780014"
       - type: git
-        url: "git://github.com/meta-qt5/meta-qt5" 
-        rev: "45c45a1524bd6a8dbd3dcf2077c791a23fec8d91"
+        url: "git://github.com/iusyk/meta-qt5" 
+        rev: "moulin-cr7"
       - type: git
         url: "ssh://git@gitpct.epam.com/epmd-aepr/meta-aos"
         rev: "da4f35734fd6dc4053153aeaa7faa33dfc322f4a"
