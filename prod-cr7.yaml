@@ -229,6 +229,7 @@ components:
         - "../meta-qt5"
         - "../meta-xt-common/meta-xt-domx"
         - "../meta-xt-common/meta-xt-driver-domain"
+        - "../meta-xt-common/meta-xt-images-vgpu"
         - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-demo-domx"
         - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-demo-driver-domain"
       target_images:
