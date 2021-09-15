@@ -3,6 +3,7 @@ desc: "Xen-Troops development setup for Renesas RCAR Gen3 hardware"
 variables:
   YOCTOS_WORK_DIR: "yocto"
   DOMD_BUILD_DIR: "build-domd"
+  DOM0_BUILD_DIR: "build-dom0"
   XT_DOMD_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-domd.dtb"
   XT_DOMU_DTB_NAME: "salvator-generic-domu.dtb"
   XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
@@ -150,6 +151,23 @@ common_data:
         - "../meta-clang"
 
 components:
+  dom0:
+    build-dir: "%{YOCTOS_WORK_DIR}"
+    default: true
+    sources:
+      - *COMMON_SOURCES
+      - type: git
+        url: "git://git.yoctoproject.org/poky.git"
+        rev: "424296bf9bb4bae27febf91bce0118df09ce5fa1"
+      - type: git
+        url: "git://git.yoctoproject.org/meta-virtualization.git"
+        rev: "92cd3467502bd27b98a76862ca6525ce425a8479"
+      - type: git
+        url: "git://git.yoctoproject.org/meta-arm.git"
+        rev: "f7c5e7d5094f65d105d9d580ba59527c25fb0d0f"
+      - type: git
+        url: "git://git.openembedded.org/meta-openembedded"
+        rev: "f2d02cb71eaff8eb285a1997b30be52486c160ae"
   domd:
     build-dir: "%{YOCTOS_WORK_DIR}"
     sources:
