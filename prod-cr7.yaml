@@ -212,6 +212,7 @@ components:
         - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
         - [BBMASK_append, " meta-arm/meta-arm/recipes-security/optee"]
         - [XT_GUESTS_INSTAL, " "]
+        - [XT_SHARED_ROOTFS_DIR, ""]
       build_target: core-image-weston
       layers:
         - "../poky/meta"
