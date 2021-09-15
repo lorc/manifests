@@ -211,6 +211,7 @@ components:
         - [XT_DOM_NAME, "domd"]
         - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
         - [BBMASK_append, " meta-arm/meta-arm/recipes-security/optee"]
+        - [XT_GUESTS_INSTAL, " "]
       build_target: core-image-weston
       layers:
         - "../poky/meta"
