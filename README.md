@@ -20,6 +20,9 @@ Features that are present but not tested:
 
 * Renesas Salvator-XS M3 with 4GB memory
 * Renesas Salvator-XS H3 with 8GB memory
+* Renesas Starter Kit Premiere (H3ULCB)
+* Renesas Starter Kit Premiere 8GB (H3ULCB)
+* Renesas Starter Kit Pro (M3ULCB)
 * Audio back-end
 * SD or eMMC boot
 
