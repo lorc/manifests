@@ -304,6 +304,7 @@ components:
         - "../meta-python2"
         - "../meta-qt5"
         - "../meta-xt-rcar/meta-xt-rcar-driver-domain"
+        - "../meta-xt-rcar/meta-xt-rcar-proprietary"
         - "../meta-xt-common/meta-xt-domx"
         - "../meta-xt-common/meta-xt-driver-domain"
         - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-demo-domx"
