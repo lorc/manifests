@@ -47,6 +47,13 @@ common_data:
     # Remove features that we are not using
     - [DISTRO_FEATURES_remove, "x11 gtk gobject-introspection-data wifi nfc bluetooth irda zeroconf 3g sysvinit"]
 
+    # User domain
+    - [XT_GUESTS_INSTALL, "doma"]
+    - [XT_GUESTS_BUILD, "doma"]
+
+    # optee variables
+    - [OPTEE_ARCH, "arm64"]
+
   # Conf options for domain that are built used renesas layer
   domd_domu_conf: &DOMD_DOMU_CONF
     - [MACHINE, "%{MACHINE}"]
@@ -234,7 +241,7 @@ components:
         type: android
         env:
           - "TARGET_BOARD_PLATFORM=r8a7795"
-        lunch-target: xenvm-userdebug
+        lunch_target: xenvm-userdebug
         target_images:
           - "out/xenvm/userdebug/boot.img"
           - "out/xenvm/userdebug/system.img"
@@ -289,7 +296,6 @@ components:
         - "../meta-xt-rcar/meta-xt-rcar-driver-domain"
         - "../meta-xt-common/meta-xt-domx"
         - "../meta-xt-common/meta-xt-driver-domain"
-        - "../meta-xt-common/meta-xt-images-vgpu"
         - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-demo-domx"
         - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-demo-driver-domain"
       target_images:
