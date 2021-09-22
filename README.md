@@ -23,6 +23,8 @@ Features that are present but not tested:
 * Renesas Starter Kit Premiere (H3ULCB)
 * Renesas Starter Kit Premiere 8GB (H3ULCB)
 * Renesas Starter Kit Pro (M3ULCB)
+* Kingfisher with Starter Kit Premiere 8GB board
+* AosBox with Starter Kit Premiere 8GB board
 * Audio back-end
 * SD or eMMC boot
 
