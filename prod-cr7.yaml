@@ -105,7 +105,7 @@ common_data:
     - [DISTRO_FEATURES_remove, "ptest"]
 
     # HACK: force ipk instead of rpm b/c it makes troubles to PVR UM build otherwise
-    - [PACKAGE_CLASSES, "package_rpm"]
+    - [PACKAGE_CLASSES, "package_ipk"]
 
     # OMX H264 decoder library for Linux (RTM8RC0000ZMD1LQ00JPL3E)
     - [DISTRO_FEATURES_append, " h264dec_lib"]
