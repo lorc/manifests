@@ -192,6 +192,7 @@ components:
         - *DOMD_DOMU_CONF
         - [XT_DOM_NAME, "domd"]
         - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
+        - [XT_DEVICE_TREES, "%{XT_DOMD_DTB_NAME} %{XT_XEN_DTB_NAME}"]
 
       build_target: core-image-weston
       layers:
@@ -250,6 +251,7 @@ parameters:
           XT_DOMD_CONFIG_NAME: "domd-salvator-x-m3.cfg"
           XT_DOMU_CONFIG_NAME: "domu-salvator-x-m3.cfg"
           XT_DOMD_DTB_NAME: "r8a77960-%{MACHINE}-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77960-%{MACHINE}-xen.dtb"
     salvator-xs-m3-2x4g:
       default: true
       overrides:
@@ -259,6 +261,7 @@ parameters:
           XT_DOMD_CONFIG_NAME: "domd-salvator-xs-m3-2x4g.cfg"
           XT_DOMU_CONFIG_NAME: "domu-generic-m3-2x4g.cfg"
           XT_DOMD_DTB_NAME: "r8a77961-salvator-xs-2x4g-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77961-salvator-xs-2x4g-xen.dtb"
           XT_OP_TEE_FLAVOUR: "salvator_m3_2x4g"
     salvator-xs-h3:
       overrides:
@@ -269,6 +272,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3"
           XT_DOMD_DTB_NAME: "r8a7795-salvator-xs-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a7795-salvator-xs-xen.dtb"
     salvator-xs-h3-4x2g:
       overrides:
         variables:
@@ -278,6 +282,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3-4x2g.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
           XT_DOMD_DTB_NAME: "r8a7795-salvator-xs-4x2g-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a7795-salvator-xs-4x2g-xen.dtb"
     salvator-x-h3:
       overrides:
         variables:
@@ -287,6 +292,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3"
           XT_DOMD_DTB_NAME: "r8a7795-salvator-x-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a7795-salvator-x-xen.dtb"
     h3ulcb:
       overrides:
         variables:
@@ -296,6 +302,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3"
           XT_DOMD_DTB_NAME: "r8a77951-h3ulcb-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77951-h3ulcb-xen.dtb"
     h3ulcb-4x2g:
       overrides:
         variables:
@@ -305,6 +312,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
           XT_DOMD_DTB_NAME: "r8a77951-h3ulcb-4x2g-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-xen.dtb"
     h3ulcb-kf-4x2g:
       overrides:
         variables:
@@ -314,6 +322,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
           XT_DOMD_DTB_NAME: "r8a77951-h3ulcb-4x2g-kf-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-kf-xen.dtb"
         components:
           domd:
             sources:
@@ -335,6 +344,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-generic-h3.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
           XT_DOMD_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-xen.dtb"
     m3ulcb:
       overrides:
         variables:
@@ -344,6 +354,7 @@ parameters:
           XT_DOMU_CONFIG_NAME: "domu-m3ulcb.cfg"
           XT_OP_TEE_FLAVOUR: "salvator_m3"
           XT_DOMD_DTB_NAME: "r8a7796-m3ulcb-domd.dtb"
+          XT_XEN_DTB_NAME: "r8a7796-m3ulcb-xen.dtb"
 
   ENABLE_MM:
     desc: "Enable Multimedia support"
