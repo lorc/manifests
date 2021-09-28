@@ -27,6 +27,7 @@ Features that are present but not tested:
 * AosBox with Starter Kit Premiere 8GB board
 * Audio back-end
 * SD or eMMC boot
+* Android VM support
 
 Features that are planned, but not present:
 
@@ -63,11 +64,22 @@ optional arguments:
                         RCAR Gen3-based device
   --ENABLE_MM {no}      Enable Multimedia support
   --PREBUILT_DDK {no}   Use pre-built GPU drivers
+  --ENABLE_ANDROID {no,yes}
+                        Build Android as a guest VM
+  --ENABLE_DOMU {no,yes}
+                        Build generic Yocto-based DomU
 ```
 
-To built for Salvator XS M3 8GB use the following command line:
-`moulin prod-devel-rcar.yaml --MACHINE salvator-xs-m3-2x4g`.
+To built for Salvator XS M3 8GB with DomU (generic yocto-based virtual
+machine) use the following command line: `moulin prod-devel-rcar.yaml
+--MACHINE salvator-xs-m3-2x4g --ENABLE_DOMU yes`.
 
 Moulin will generate `build.ninja` file. After that - run `ninja` to
 build the images. This will take some time and disk space, as it will
 built 3 separate Yocto images.
+
+To built for Salvator XS H3 8GB with Android VM use the following
+command line: `moulin prod-devel-rcar.yaml --MACHINE
+salvator-xs-h3-4x2g --ENABLE_DOMU no --ENABLE_ANDROID yes `.
+
+This will require even more time and space, as Android is quite big.
