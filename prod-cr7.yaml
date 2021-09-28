@@ -352,8 +352,8 @@ parameters:
            XT_DOMD_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-4x2g-ab-domd.dtb"
            XT_DOMU_CONFIG_NAME: "doma-h3ulcb-4x2g-ab.cfg"
            XT_DOMA_CONFIG_NAME: "doma-h3ulcb-4x2g-ab.cfg"
-           XT_DOMU_DTB_NAME: "salvator-generic-doma-%{MACHINE}.dtb"
-           XT_DOMA_DTB_NAME: "salvator-generic-doma-%{MACHINE}.dtb"
+           XT_DOMU_DTB_NAME: "not assumed"
+           XT_DOMA_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-4x2g-ab-doma.dtb"
            XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
 
   ENABLE_MM:
