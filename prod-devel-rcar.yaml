@@ -10,6 +10,7 @@ variables:
   XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
   XT_PVR_NUM_OSID: "2"
   XT_OP_TEE_FLAVOUR: "generic_dt"
+  XT_GENERIC_DOMU_TAG: ""
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
@@ -137,6 +138,7 @@ components:
         - [XT_DOMD_DTB_NAME, "%{XT_DOMD_DTB_NAME}"]
         - [XT_DOMU_DTB_NAME, "%{XT_DOMU_DTB_NAME}"]
         - [XT_DOM_NAME, "dom0"]
+        - [XT_GUEST_INSTALL, "%{XT_GENERIC_DOMU_TAG} domd"]
 
         # Disable HWDB which quite huge (around 15MB) and is not required at all
         - [BAD_RECOMMENDATIONS_append, " udev-hwdb"]
@@ -167,10 +169,8 @@ components:
       build_target: core-image-thin-initramfs
       external_src:
         domd: "%{YOCTOS_WORK_DIR}/%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
-        domu: "%{YOCTOS_WORK_DIR}/%{DOMU_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
       additional_deps:
         - "%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/Image"
-        - "%{DOMU_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/Image"
       target_images:
         - "tmp/deploy/images/yocto-generic/Image"
 
@@ -193,6 +193,7 @@ components:
         - [XT_DOM_NAME, "domd"]
         - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
         - [XT_DEVICE_TREES, "%{XT_DOMD_DTB_NAME} %{XT_XEN_DTB_NAME}"]
+        - [XT_GUEST_INSTALL, "%{XT_GENERIC_DOMU_TAG}"]
 
       build_target: core-image-weston
       layers:
@@ -215,7 +216,6 @@ components:
 
   domu:
     build-dir: "%{YOCTOS_WORK_DIR}"
-    default: true
     sources:
       - *COMMON_SOURCES
     builder:
@@ -356,6 +356,21 @@ parameters:
           XT_DOMD_DTB_NAME: "r8a7796-m3ulcb-domd.dtb"
           XT_XEN_DTB_NAME: "r8a7796-m3ulcb-xen.dtb"
 
+  ENABLE_DOMU:
+    desc: "Build generic Yocto-based DomU"
+    "no":
+      default: true
+    "yes":
+      overrides:
+        variables:
+          XT_GENERIC_DOMU_TAG: "domu"
+        components:
+          dom0:
+            builder:
+              additional_deps:
+                - "%{DOMU_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/Image"
+              external_src:
+                domu: "%{YOCTOS_WORK_DIR}/%{DOMU_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
   ENABLE_MM:
     desc: "Enable Multimedia support"
     "no":
