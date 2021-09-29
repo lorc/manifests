@@ -31,7 +31,7 @@ common_data:
       rev: "f2d02cb71eaff8eb285a1997b30be52486c160ae"      
     - type: git
       url: "https://github.com/xen-troops/meta-xt-rcar.git"
-      rev: master
+      rev: "d3dd40794080e37a08254b80325c3461207f5dd9"
 
   conf: &COMMON_CONF
     - [SSTATE_DIR, "${TOPDIR}/../common_data/sstate"]
@@ -261,8 +261,8 @@ components:
     sources:
       - *COMMON_SOURCES
       - type: git
-        url: "https://github.com/renesas-rcar/meta-renesas.git"
-        rev: "fd8ab2bb1b5ca98483c6f4aecf09a85c4d6bc016"
+        url: "https://github.com/iusyk/meta-renesas.git"
+        rev: "cr7-aosbox"
       - type: git
         url: "git://git.yoctoproject.org/meta-selinux.git"
         rev: "7af62c91d7d00a260cf28e7908955539304d100d"
