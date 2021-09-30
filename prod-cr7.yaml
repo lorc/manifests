@@ -288,6 +288,7 @@ components:
         - *DOMD_CONF
         - [XT_DOM_NAME, "domd"]
         - [XT_OP_TEE_FLAVOUR, "%{XT_OP_TEE_FLAVOUR}"]
+        - [XT_DEVICE_TREES, "%{XT_DOMD_DTB_NAME} %{XT_DOMA_DTB_NAME} %{XT_XEN_DTB_NAME}"]
 
       build_target: core-image-minimal
       layers:
@@ -318,33 +319,6 @@ parameters:
   # Machines
   MACHINE:
     desc: "RCAR Gen3-based device"
-    salvator-x-m3:
-      default: true
-      overrides:
-        variables:
-          MACHINE: "salvator-x"
-          SOC_FAMILY: "r8a7796"
-          XT_DOMD_CONFIG_NAME: "domd-salvator-x-m3.cfg"
-          XT_DOMU_CONFIG_NAME: "domu-salvator-x-m3.cfg"
-          # We can't use %{SOC_FAMILY} because Renesas adds one more digit
-          # to it when creating DTB file names
-          XT_DOMD_DTB_NAME: "r8a77960-%{MACHINE}-domd.dtb"
-    salvator-xs-m3-2x4g:
-      default: true
-      overrides:
-        variables:
-          MACHINE: "salvator-x"
-          SOC_FAMILY: "r8a7796"
-          XT_DOMD_CONFIG_NAME: "domd-salvator-xs-m3-2x4g.cfg"
-          XT_DOMU_CONFIG_NAME: "domu-generic-m3-2x4g.cfg"
-          XT_DOMD_DTB_NAME: "r8a77961-salvator-xs-2x4g-domd.dtb"
-          XT_OP_TEE_FLAVOUR: "salvator_m3_2x4g"
-    salvator-xs-h3:
-      overrides:
-        variables:
-          MACHINE: "salvator-x"
-          SOC_FAMILY: "r8a7795"
-          XT_DOMD_CONFIG_NAME: "domd-salvator-xs-h3.cfg"
     h3ulcb-4x2g-ab-xt:
       overrides:
         variables:
@@ -357,6 +331,7 @@ parameters:
            XT_DOMU_DTB_NAME: "not assumed"
            XT_DOMA_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-4x2g-ab-doma.dtb"
            XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
+           XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
 
   ENABLE_MM:
     desc: "Enable Multimedia support"
