@@ -11,6 +11,8 @@ variables:
   XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
   XT_PVR_NUM_OSID: "2"
   XT_OP_TEE_FLAVOUR: "generic_dt"
+  XT_GENERIC_DOMU_TAG: ""
+  XT_DOMA_TAG: "doma"
 common_data:
   # Common configuration options for all yocto-based domains
   sources: &COMMON_SOURCES
@@ -50,9 +52,9 @@ common_data:
     - [DISTRO_FEATURES_remove, "x11 gtk gobject-introspection-data wifi nfc bluetooth irda zeroconf 3g sysvinit"]
 
     # User domain
-    - [XT_GUESTS_INSTALL, "doma"]
     - [XT_GUESTS_BUILD, "doma"]
     - [XT_DOMAINS, " doma"]
+    - [XT_GUEST_INSTALL, ""%{XT_GENERIC_DOMU_TAG} %{XT_DOMA_TAG} domd"]
 
     # optee variables
     - [OPTEE_ARCH, "arm64"]
