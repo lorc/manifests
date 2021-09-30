@@ -8,7 +8,8 @@ variables:
   XT_DOM0_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-dom0.dtb"
   XT_DOMD_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-domd.dtb"
   XT_DOMU_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-doma.dtb"
-  XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
+  XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-xen.dtb"
+  #%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
   XT_PVR_NUM_OSID: "2"
   XT_OP_TEE_FLAVOUR: "generic_dt"
   XT_GENERIC_DOMU_TAG: ""
@@ -33,7 +34,8 @@ common_data:
       rev: "f2d02cb71eaff8eb285a1997b30be52486c160ae"      
     - type: git
       url: "https://github.com/xen-troops/meta-xt-rcar.git"
-      rev: "d3dd40794080e37a08254b80325c3461207f5dd9"
+      rev: "master"
+      # d3dd40794080e37a08254b80325c3461207f5dd9
 
   conf: &COMMON_CONF
     - [SSTATE_DIR, "${TOPDIR}/../common_data/sstate"]
@@ -54,7 +56,7 @@ common_data:
     # User domain
     - [XT_GUESTS_BUILD, "doma"]
     - [XT_DOMAINS, " doma"]
-    - [XT_GUEST_INSTALL, ""%{XT_GENERIC_DOMU_TAG} %{XT_DOMA_TAG} domd"]
+    - [XT_GUEST_INSTALL, "%{XT_GENERIC_DOMU_TAG} %{XT_DOMA_TAG} domd"]
 
     # optee variables
     - [OPTEE_ARCH, "arm64"]
@@ -331,7 +333,7 @@ parameters:
            XT_DOMU_DTB_NAME: "not assumed"
            XT_DOMA_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-4x2g-ab-doma.dtb"
            XT_OP_TEE_FLAVOUR: "salvator_h3_4x2g"
-           XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
+           XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-xen.dtb"
 
   ENABLE_MM:
     desc: "Enable Multimedia support"
