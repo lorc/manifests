@@ -187,9 +187,6 @@ components:
     default: true
     sources:
       - *COMMON_SOURCES
-      - type: git
-        url: "https://github.com/xen-troops/meta-xt-prod-devel-rcar.git"
-        rev: master
     builder:
       type: yocto
       work_dir: "%{DOM0_BUILD_DIR}"
@@ -244,7 +241,7 @@ components:
     build-dir: "android"
     sources:
       - type: repo
-        url: https://github.com/xen-troops/android_manifest.git
+        url: "ssh://git@gitpct.epam.com/rec-inv/android_manifest.git"
         rev: android-11-master
         manifest: doma.xml
         depth: 1
