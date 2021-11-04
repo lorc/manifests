@@ -35,7 +35,9 @@ common_data:
     - type: git
       url: "https://github.com/xen-troops/meta-xt-rcar.git"
       rev: "master"
-      # d3dd40794080e37a08254b80325c3461207f5dd9
+    - type: git
+      url: "ssh://git@gitpct.epam.com/rec-inv/meta-xt-prod-cr7-android-demo.git"
+      rev: "cr7-moulin-doma" 
 
   conf: &COMMON_CONF
     - [SSTATE_DIR, "${TOPDIR}/../common_data/sstate"]
@@ -43,9 +45,6 @@ common_data:
 
     # Skip warning about missing "virtualization" distro feature
     - [SKIP_META_VIRT_SANITY_CHECK, "1"]
-
-    # Use hypervisor console on all guests
-    - [SERIAL_CONSOLES, "115200;hvc0"]
 
     # Configure number of supported GPU virtual guests
     - [XT_PVR_NUM_OSID, "%{XT_PVR_NUM_OSID}"]
@@ -336,9 +335,6 @@ components:
       - type: git
         url: "ssh://git@gitpct.epam.com/epmd-aepr/meta-aos"
         rev: "da4f35734fd6dc4053153aeaa7faa33dfc322f4a"
-      - type: git
-        url: "ssh://git@gitpct.epam.com/rec-inv/meta-xt-prod-cr7-android-demo.git"
-        rev: "feature/cr7-moulim"
     builder:
       type: yocto
       work_dir: "%{DOMD_BUILD_DIR}"
