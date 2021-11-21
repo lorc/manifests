@@ -1,0 +1,331 @@
+desc: "Xen-Troops development setup for Renesas RCAR Gen3 hardware"
+
+variables:
+  YOCTOS_WORK_DIR: "yocto"
+  DOMD_BUILD_DIR: "build-domd"
+  DOM0_BUILD_DIR: "build-dom0"
+  DOMU_BUILD_DIR: "build-domf"
+  XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-xen.dtb"
+  XT_PVR_NUM_OSID: "2"
+  XT_GENERIC_DOMU_TAG: "domf"
+  XT_DOMA_TAG: ""
+common_data:
+  # Common configuration options for all yocto-based domains
+  sources: &COMMON_SOURCES
+    - type: git
+      url: "https://github.com/iusyk/meta-xt-common.git"
+      rev: "prod-aos"
+    - type: git
+      url: "git://git.yoctoproject.org/poky.git"
+      rev: "e7f0177ef3b6e06b8bc1722fca0241fef08a1530"
+    - type: git
+      url: "git://git.yoctoproject.org/meta-virtualization.git"
+      rev: "9e8c0c96b443828a255e7d6ca6291598347672ac"
+    - type: git
+      url: "git://git.openembedded.org/meta-openembedded"
+      rev: "4cd3a39f22a2712bfa8fc657d09fe2c7765a4005"
+    - type: git
+      url: "git://git.linaro.org/openembedded/meta-linaro.git"
+      rev: "b30036d4ef7ce9fe746833fc54de6ac7b0e00638"
+    - type: git
+      url: "ssh://git@github.com/iusyk/meta-xt-prod-aos.git"
+      rev: "moulin-aos"
+    - type: git
+      url: "https://github.com/iusyk/meta-xt-rcar.git"
+      rev: "prod-aos-add-thud"
+
+  conf: &COMMON_CONF
+    - [SSTATE_DIR, "${TOPDIR}/../common_data/sstate"]
+    - [DL_DIR, "${TOPDIR}/../common_data/downloads"]
+
+    # Configure number of supported GPU virtual guests
+    - [XT_PVR_NUM_OSID, "%{XT_PVR_NUM_OSID}"]
+
+    # User domain
+    - [XT_GUESTS_BUILD, "domf"]
+    - [XT_DOMAINS, " domf"]
+    - [XT_GUEST_INSTALL, "%{XT_GENERIC_DOMU_TAG} %{XT_DOMA_TAG} domd"]
+
+  # The same set of layers and configs is used both in DomD and DomU
+  # to build a DDK from source code
+  ddk_source_overrides: &DDK_SOURCE_OVERRIDES
+    builder:
+      conf:
+        - [GLES_VERSION, "1.11"]
+        - [PREFERRED_PROVIDER_gles-user-module,          "gles-user-module"]
+        - [PREFERRED_VERSION_gles-user-module,           "${GLES_VERSION}"]
+        - [PREFERRED_PROVIDER_kernel-module-gles,        "kernel-module-gles"]
+        - [PREFERRED_VERSION_kernel-module-gles,         "${GLES_VERSION}"]
+        - [PREFERRED_PROVIDER_gles-module-egl-headers,   "gles-module-egl-headers"]
+        - [PREFERRED_VERSION_gles-module-egl-headers,    "${GLES_VERSION}"]
+components:
+  dom0:
+    build-dir: "%{YOCTOS_WORK_DIR}"
+    default: true
+    sources:
+      - *COMMON_SOURCES
+    builder:
+      type: yocto
+      work_dir: "%{DOM0_BUILD_DIR}"
+      conf:
+        - *COMMON_CONF
+        - [MACHINE, "generic-armv8-xt"]
+        - [XT_DOMD_CONFIG_NAME, "%{XT_DOMD_CONFIG_NAME}"]
+        - [XT_DOMD_DTB_NAME, "%{XT_DOMD_DTB_NAME}"]
+        - [XT_DOMF_CONFIG_NAME, "%{XT_DOMF_CONFIG_NAME}"]
+        - [XT_DOM_NAME, "dom0"]
+
+        # Disable HWDB which quite huge (around 15MB) and is not required at all
+        - [BAD_RECOMMENDATIONS_append, " udev-hwdb"]
+        # Remove unused DISTRO_FEATURES
+        - [DISTRO_FEATURES_remove, "acl alsa argp pcmcia usbgadget
+                usbhost opengl ptest multiarch wayland vulkan
+                sysvinit"]
+        # Enable systemd on dom0
+        - [DISTRO_FEATURES_append, " systemd"]
+        - [VIRTUAL-RUNTIME_init_manager, "systemd"]
+
+        # Do not install kernel image to rootfs to decrease initrd size
+        - ["RDEPENDS_${KERNEL_PACKAGE_NAME}-base", ""]
+        
+        - [BBMASK_append, " meta-xt-common/meta-xt-domx/recipes-extended/xen"]
+        - [BBMASK_append, " meta-xt-common/meta-xt-domx/recipes-extended/xen/xen-tools"]
+        - [BBMASK_append, " kernel-module-mmngrbuf|kernel-module-uvcs-drv|kernel-module-vspmif|kernel-module-mmngr"]
+
+      layers:
+        - "../poky/meta"
+        - "../poky/meta-poky"
+        - "../poky/meta-yocto-bsp"
+        - "../meta-virtualization"
+        - "../meta-openembedded/meta-oe"
+        - "../meta-openembedded/meta-filesystems"
+        - "../meta-openembedded/meta-python"
+        - "../meta-openembedded/meta-networking"
+        - "../meta-xt-common/meta-xt-dom0"
+        - "../meta-xt-rcar/meta-xt-rcar-dom0"
+        - "../meta-xt-prod-aos/meta-xt-prod-aos-dom0 "
+        - "../meta-xt-common/meta-xt-domx"
+
+      build_target: core-image-thin-initramfs
+      external_src:
+        domd: "%{YOCTOS_WORK_DIR}/%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
+        domf: "%{YOCTOS_WORK_DIR}/%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
+      additional_deps:
+        - "%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/Image"
+      target_images:
+        - "tmp/deploy/images/yocto-generic/Image"
+  domu:
+    build-dir: "%{YOCTOS_WORK_DIR}/sources-domf"
+    sources:
+      - type: git
+        url: "https://github.com/iusyk/meta-xt-common.git"
+        rev: "prod-aos"
+      - type: git
+        url: "git://git.yoctoproject.org/meta-virtualization.git"
+        rev: "92cd3467502bd27b98a76862ca6525ce425a8479"
+      - type: git
+        url: "git://git.yoctoproject.org/poky.git"
+        rev: "dc38d5e494e53a7a03d5bd8d2429d0ef54cfbbb"
+      - type: git
+        url: "git://git.linaro.org/openembedded/meta-linaro"
+        rev: "10af9133aeb28b3487fd227c900c11b786505699"
+      - type: git
+        url: "ssh://git@gitpct.epam.com/epmd-aepr/meta-aos"
+        rev: "7cef8200f645f1f74ab481de671ba2efcaf2fdb1"
+      - type: git
+        url: "git://git.openembedded.org/meta-openembedded"
+        rev: "de37512b25c1f8c6bb6ab2b3782ac0fe01443483"
+      - type: git
+        url: "ssh://git@github.com/iusyk/meta-xt-prod-aos.git"
+        rev: "moulin-aos"
+    builder:
+      type: yocto
+      work_dir: "%{DOMU_BUILD_DIR}"
+      conf:
+        - *COMMON_CONF
+        #- *DOMD_DOMU_CONF
+        - [XT_DOM_NAME, "domf"]
+        - [MACHINE, "generic-armv8-xt"]
+        - [PACKAGE_CLASSES, "package_ipk"]
+        - [DISTRO_FEATURES_append, " virtualization"]
+        # For systemd
+        - [DISTRO_FEATURES_append, " systemd"]
+        - [DISTRO_FEATURES_BACKFILL_CONSIDERED_append, "sysvinit"]
+        - [VIRTUAL-RUNTIME_init_manager, "systemd"]
+        - [VIRTUAL-RUNTIME_initscripts, "systemd-compat-units"]
+        - [PREFERRED_PROVIDER_virtual/runc, "runc-opencontainers"]
+        #initramfs configuration
+        - [INITRAMFS_IMAGE, "core-image-tiny-initramfs"]
+        - [INITRAMFS_IMAGE_BUNDLE, "0"]
+        - [INITRAMFS_FSTYPES, "cpio.gz"]
+
+        - [PREFERRED_PROVIDER_virtual/kernel, "linux-generic-armv8"]
+      layers:
+        - "../meta-xt-common/meta-xt-domx"
+        - "../meta-linaro/meta-optee"
+        - "../poky/meta"
+        - "../poky/meta-poky"
+        - "../poky/meta-yocto-bsp"
+        - "../meta-openembedded/meta-oe"
+        - "../meta-openembedded/meta-python"
+        - "../meta-openembedded/meta-networking"
+        - "../meta-openembedded/meta-filesystems"
+        - "../meta-virtualization"
+        - "../meta-aos"
+        - "../meta-xt-prod-aos/meta-xt-prod-aos-domf"
+      build_target: core-image-minimal
+      target_images:
+        - "tmp/deploy/images/%{MACHINE}/Image"
+        #yocto/sources-domf/build-domf/tmp/deploy/images/h3ulcb-cb-xt/Image
+          #- "tmp/deploy/images/%{MACHINE}/Image"
+  domd:
+    build-dir: "%{YOCTOS_WORK_DIR}"
+    sources:
+      - *COMMON_SOURCES
+      - type: git
+        url: "git://github.com/renesas-rcar/meta-renesas.git"
+        rev: "2a535519e1808bb3a43e88a6c5dcc0556fc7101d"
+      - type: git
+        url: "git://git.yoctoproject.org/meta-selinux.git"
+        rev: "fb6192aa2c5df8e80c5e6d4fa5448d574332f68f"
+      - type: git
+        url: "ssh://git@gitpct.epam.com/epmd-aepr/meta-aos"
+        rev: "refs/tags/v4.0.0"
+    builder:
+      type: yocto
+      work_dir: "%{DOMD_BUILD_DIR}"
+      conf:
+        - *COMMON_CONF
+        - [MACHINE, "%{MACHINE}"]
+        - [SOC_FAMILY, "%{SOC_FAMILY}"]
+        - [MACHINEOVERRIDES_append, ":rcar"]
+        # add the static lib to SDK toolchain
+        - [SDKIMAGE_FEATURES_append, " staticdev-pkgs"]
+        # Disable optee in meta-renesas and meta-xt-images-domx layers
+        - [BBMASK_append, " meta-renesas/meta-rcar-gen3/recipes-bsp/optee"]
+
+        - [XT_DOM_NAME, "domd"]
+        - [XT_DEVICE_TREES, "%{XT_DOMD_DTB_NAME} %{XT_XEN_DTB_NAME}"]
+        - [PACKAGE_CLASSES, "package_ipk"]
+        - [BB_DANGLINGAPPENDS_WARNONLY, "yes"]
+        - [SERIAL_CONSOLE, "115200 hvc0"]
+        - [DEFAULT_TIMEZONE, "US/Pacific"]
+        - [DISTRO_FEATURES_remove, "ivi-shell opengl wayland vulkan pulseaudio"]
+        # Qemu configuration
+        #
+        # By default qemu will build with a builtin VNC server where graphical output can be
+        # seen. The two lines below enable the SDL backend too. By default libsdl-native will
+        # be built, if you want to use your host's libSDL instead of the minimal libsdl built
+        # by libsdl-native then uncomment the ASSUME_PROVIDED line below.
+        - [PACKAGECONFIG_append_pn-qemu-native, " sdl"]
+        - [PACKAGECONFIG_append_pn-nativesdk-qemu, " sdl"]
+        - [CONF_VERSION, "1"]
+        - [DISTRO_FEATURES_append, " systemd"]
+        - [VIRTUAL-RUNTIME_init_manager, "systemd"]
+        - [DISTRO_FEATURES_append, " pam"]
+        - [LICENSE_FLAGS_WHITELIST, "commercial"]
+        # Configuration for ivi-shell and ivi-extension
+        - [DISTRO_FEATURES_append, " ivi-shell"]
+        #  Add Capacity Aware migration Strategy (CAS)
+        - [MACHINE_FEATURES_append, " cas"]
+        # For virtualization
+        - [DISTRO_FEATURES_append, " virtualization"]
+        
+        - [DISTRO_FEATURES_remove, " x11 gtk gobject-introspection-data nfc irda zeroconf 3g"]
+
+        - [ASSUME_PROVIDED_append, "sync-native"]
+        - [HOSTTOOLS_append, " sync"]
+        - [ASSUME_PROVIDED_append, "bison-native"]
+        - [HOSTTOOLS_append, " bison"]
+
+        # Initramfs configuration
+        - [INITRAMFS_IMAGE, "core-image-tiny-initramfs"]
+        - [INITRAMFS_IMAGE_BUNDLE, "0"]
+        - [INITRAMFS_FSTYPES, "cpio.gz"]
+
+        - [GOVERSION, "1.14%"]
+
+        - [PREFERRED_VERSION_xen, "4.12.0+git%"]
+
+        - [PREFERRED_VERSION_u-boot_rcar, "v2018.09%"]
+
+        #exclude some recipes from the processing
+        #because they are customized for prod-aos
+        - [BBMASK_append, " meta-xt-common/meta-xt-domx/recipes-extended/xen"]
+        - [BBMASK_append, " meta-xt-common/meta-xt-driver-domain/recipes-extended/libxenbe/libxenbe"]
+        - [BBMASK_append, " |kernel-module-uvcs-drv|omx-user-module"]
+        - [BBMASK_append, " meta-xt-common/meta-xt-driver-domain/recipes-extended/displaymanager/displaymanager"]
+        - [BBMASK_append, " meta-xt-rcar/meta-xt-rcar-driver-domain/recipes-security/optee"]
+        - [BBMASK_append, " meta-xt-rcar/meta-xt-rcar-driver-domain/recipes-extended/xen"]
+
+      build_target: core-image-minimal
+      layers:
+        - "../poky/meta"
+        - "../poky/meta-poky"
+        - "../poky/meta-yocto-bsp"
+        - "../meta-renesas/meta-rcar-gen3"
+        - "../meta-linaro/meta-linaro-toolchain"
+        - "../meta-linaro/meta-optee"
+        - "../meta-openembedded/meta-oe"
+        - "../meta-openembedded/meta-networking"
+        - "../meta-openembedded/meta-python"
+        - "../meta-openembedded/meta-filesystems"
+        - "../meta-selinux"
+        - "../meta-virtualization"
+        - "../meta-aos"
+        - "../meta-xt-common/meta-xt-domx"
+        - "../meta-xt-common/meta-xt-driver-domain"
+        - "../meta-xt-prod-aos/meta-xt-prod-aos-driver-domain"
+        - "../meta-xt-prod-aos/meta-xt-prod-aos-domx"
+       
+      target_images:
+        - "tmp/deploy/images/%{MACHINE}/Image"      
+parameters:
+  # Machines
+  MACHINE:
+    desc: "RCAR Gen3-based device"
+    h3ulcb-cb-xt:
+      overrides:
+        variables:
+           MACHINE: "h3ulcb-cb-xt"
+           SOC_FAMILY: "r8a7795"
+           XT_DOM0_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-cetibox-dom0.dtb"
+           XT_DOMD_CONFIG_NAME: "domd-h3ulcb-cb.cfg"
+           XT_DOMD_DTB_NAME: "%{SOC_FAMILY}-h3ulcb-cetibox-domd.dtb"
+           XT_DOMF_CONFIG_NAME: "domu-generic-h3-4x2g.cfg"
+           XT_XEN_DTB_NAME: "r8a77951-h3ulcb-4x2g-ab-xen.dtb"
+
+  ENABLE_MM:
+    desc: "Enable Multimedia support"
+    "no":
+      default: true
+      overrides:
+        components:
+          domd:
+            builder:
+              conf:
+                # Mask MMP recipes
+                - [BBMASK_append, " |kernel-module-uvcs-drv|omx-user-module"]
+  PREBUILT_DDK:
+    desc: "Use pre-built GPU drivers"
+    "no":
+      default: true
+      overrides:
+        components:
+          domd:
+            *DDK_SOURCE_OVERRIDES
+  ENABLE_DOMU:
+    desc: "Build generic Yocto-based DomU"
+    "no":
+      default: true
+    "yes":
+      overrides:
+        variables:
+          XT_GENERIC_DOMU_TAG: "domf"
+        components:
+          dom0:
+            builder:
+              additional_deps:
+                - "sources-domf/build-domf/tmp/deploy/images/%{MACHINE}/Image"
+              external_src:
+                domf: "%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"            
