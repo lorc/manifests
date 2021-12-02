@@ -5,6 +5,7 @@ variables:
   DOMD_BUILD_DIR: "build-domd"
   DOM0_BUILD_DIR: "build-dom0"
   DOMU_BUILD_DIR: "build-domu"
+  CLUSTER_BUILD_DIR: "cluster-wrapper"
   XT_DOM0_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-dom0.dtb"
   XT_DOMD_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-domd.dtb"
   XT_DOMA_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-doma.dtb"
@@ -370,6 +371,32 @@ components:
       target_images:
         - "tmp/deploy/images/%{MACHINE}/Image"
 
+  cluster:
+    build-dir: "%{YOCTOS_WORK_DIR}"
+    sources:
+      - *COMMON_SOURCES
+      - type: git
+        url: "https://github.com/iusyk/meta-renesas.git"
+        rev: "cr7-aosbox"
+    builder:
+      type: yocto
+      work_dir: "%{CLUSTER_BUILD_DIR}"
+      conf:
+        - *COMMON_CONF
+        - *DOMD_DOMU_CONF
+      build_target: cluster-wrapper
+      layers:
+        - "../poky/meta"
+        - "../poky/meta-poky"
+        - "../poky/meta-yocto-bsp"
+        - "../meta-renesas/meta-rcar-gen3"
+        - "../meta-arm/meta-arm-toolchain"
+        - "../meta-openembedded/meta-python"
+        - "../meta-xt-prod-cr7-android-demo/meta-xt-prod-cr7-cluster"
+        - "../meta-xt-common/meta-xt-domx"
+        - "../meta-openembedded/meta-oe"
+      target_images:
+        - "tmp/deploy/cr7-%{MACHINE}.bin"
 parameters:
   # Machines
   MACHINE:
@@ -422,6 +449,18 @@ parameters:
                 - "%{DOMU_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/Image"
               external_src:
                 domu: "%{YOCTOS_WORK_DIR}/%{DOMD_BUILD_DIR}/tmp/deploy/images/%{MACHINE}/"
+  ENABLE_CLUSTER:
+    desc: "Build generic Yocto-based DomU"
+    "no":
+      default: true
+    "yes":
+      overrides:
+        components:
+          dom0:
+            builder:
+              additional_deps:
+                - "%{CLUSTER_BUILD_DIR}/tmp/deploy/cr7-%{MACHINE}.bin"
+
   ENABLE_ANDROID:
     desc: "Build Android"
     "no":
